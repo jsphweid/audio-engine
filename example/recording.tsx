@@ -1,14 +1,15 @@
-import FileSaver from 'file-saver'
-import * as React from 'react'
-import * as RecordingAudioEngine from '../src'
-import { timeSince } from './helpers'
+import FileSaver from "file-saver";
+import * as React from "react";
+
+import * as RecordingAudioEngine from "../src";
+import { timeSince } from "./helpers";
 
 export interface RecordingProps {
-  recording: RecordingAudioEngine.MonoRecording
+  recording: RecordingAudioEngine.MonoRecording;
 }
 
 export interface RecordingState {
-  isPlaying: boolean
+  isPlaying: boolean;
 }
 
 export default class Recording extends React.Component<
@@ -16,26 +17,26 @@ export default class Recording extends React.Component<
   RecordingState
 > {
   constructor(props: RecordingProps) {
-    super(props)
+    super(props);
     this.state = {
-      isPlaying: false
-    }
+      isPlaying: false,
+    };
   }
 
   private handlePlay = (): void => {
-    this.setState({ isPlaying: true })
+    this.setState({ isPlaying: true });
     this.props.recording.play().then(() => {
-      this.setState({ isPlaying: false })
-    })
-  }
+      this.setState({ isPlaying: false });
+    });
+  };
 
   private handleDownloadWav = (): void => {
-    FileSaver.saveAs(this.props.recording.wavBlob)
-  }
+    FileSaver.saveAs(this.props.recording.wavBlob);
+  };
 
   public render() {
-    const { recording } = this.props
-    const { isPlaying } = this.state
+    const { recording } = this.props;
+    const { isPlaying } = this.state;
     return (
       <li>
         made {timeSince(recording.createDate)} ago
@@ -47,6 +48,6 @@ export default class Recording extends React.Component<
         </button>
         <button onClick={this.handleDownloadWav}>Download Wav</button>
       </li>
-    )
+    );
   }
 }

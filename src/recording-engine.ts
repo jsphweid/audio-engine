@@ -1,20 +1,24 @@
 import { MAX_RECORDING_SECONDS } from "./constants";
 import { makeTimeoutPromise } from "./helpers";
 import MonoRecording from "./mono-recording";
+import audioContextInstance from "./audio-context/index";
 import {
   connectRecordingNodes,
   disconnectRecordingNodes,
 } from "./recording-nodes";
 
-let stopRecordingResolver: () => void;
+let stopRecordingResolver: Function;
 
 const makePromiseWithExternalHandlers = (): Promise<MonoRecording> => {
-  return new Promise(resolve => (stopRecordingResolver = resolve));
+  return new Promise(resolve => {
+    stopRecordingResolver = resolve;
+  });
 };
 
 export function startRecording(
   maxLengthSeconds = MAX_RECORDING_SECONDS,
 ): Promise<MonoRecording> {
+  audioContextInstance.resume();
   return connectRecordingNodes().then(() => {
     return Promise.race([
       makePromiseWithExternalHandlers(),
@@ -27,5 +31,7 @@ export function startRecording(
 }
 
 export function stopRecording(): void {
-  stopRecordingResolver();
+  if (stopRecordingResolver) {
+    stopRecordingResolver();
+  }
 }
